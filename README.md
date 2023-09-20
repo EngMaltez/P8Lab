@@ -6,7 +6,7 @@ game development ideas
 ======================
 Game that are simple enough to do in PICO-8
 
-- frw graphic and sound resources
+- few graphic and sound resources
 - few programming concepts
 
 Programming Concepts
