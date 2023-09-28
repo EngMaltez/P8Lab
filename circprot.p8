@@ -4,9 +4,15 @@ __lua__
 --protect the circle
 --by miguel maltez
 
+--todo:
+--. collision detection wave and rock
+--. collision detection rock and player
+--. delete rocks when out of range
+
 function _init()
-	plr = {x=63,y=63}
-	sws={}
+	plr = {x=63,y=63} -- player
+	sws={}        -- shockwaves
+	rocks={}
 end
 
 function _update()
@@ -15,9 +21,14 @@ function _update()
 	if (btn(⬆️)) plr.y -=1
 	if (btn(⬇️)) plr.y +=1
 	update_shockwaves()
+	update_rocks()
 	if btnp(🅾️) then
 		sfx(1)
 	 create_shockwave()
+	end
+	if btnp(❎) then
+		sfx(2)
+		create_rock()
 	end
 end
 
@@ -25,7 +36,9 @@ function _draw()
 	cls()
 	circ(plr.x,plr.y,5,4)
 	draw_shockwaves()
-	print(#sws,0,0,8)
+	draw_rocks()
+	print("waves:"..#sws,0,0,12)
+	print("rocks:"..#rocks,0,6,5)
 end
 -->8
 -- shockwave
@@ -45,9 +58,41 @@ end
 
 function draw_shockwaves()
 	for sw in all(sws) do
-		circ(sw.cx,sw.cy,sw.r,12)
+		circ(sw.cx,sw.cy,sw.r,13)
 	end
 end
+-->8
+-- rocks
+
+function create_rock()
+	angle = 0 --rnd(1)
+	rock = {
+		cx = cos(angle)*64,
+		cy = sin(angle)*64,
+		r = flr(rnd(2))+1,
+		vx=0, vy=0
+	}
+	dx = plr.x-rock.cx
+	dy = plr.y-rock.cy
+	distance = sqrt(dx*dx+dy*dy)
+	rock.vx = dx / distance
+	rock.vy = dy / distance
+	add(rocks,rock)
+end
+
+function update_rocks()
+	for rock in all(rocks) do
+		rock.cx += rock.vx
+		rock.cy += rock.vy
+	end
+end
+
+function draw_rocks()
+	for rock in all(rocks) do
+		circ(rock.cx,rock.cy,rock.r,5)
+	end
+end
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -58,3 +103,4 @@ __gfx__
 __sfx__
 000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00020000080501e0502b050350503a050390502d0501e05018050130500f0500d0500a05009050080500705007050060500605005050050500305003050010500005000050000000000000000000000000000000
+00100000040500b050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
