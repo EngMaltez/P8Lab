@@ -20,8 +20,7 @@ function _update()
 	if (btn(➡️)) plr.x +=1
 	if (btn(⬆️)) plr.y -=1
 	if (btn(⬇️)) plr.y +=1
-	update_shockwaves()
-	update_rocks()
+	
 	if btnp(🅾️) then
 		sfx(1)
 	 create_shockwave()
@@ -30,6 +29,19 @@ function _update()
 		sfx(2)
 		create_rock()
 	end
+
+	update_shockwaves()
+	update_rocks()
+	-- check collisions
+	for wave in all(sws) do
+		for rock in all(rocks) do
+			if is_colliding(wave,rock) then
+				sfx(3)
+				del(rocks, rock)
+			end
+		end
+	end
+	
 end
 
 function _draw()
@@ -44,7 +56,7 @@ end
 -- shockwave
 
 function create_shockwave()
-	add(sws,{cx=plr.x, cy=plr.y,r=1})
+	add(sws,{x=plr.x, y=plr.y,r=1})
 end
 
 function update_shockwaves()
@@ -58,22 +70,22 @@ end
 
 function draw_shockwaves()
 	for sw in all(sws) do
-		circ(sw.cx,sw.cy,sw.r,13)
+		circ(sw.x,sw.y,sw.r,13)
 	end
 end
 -->8
 -- rocks
 
 function create_rock()
-	angle = 0 --rnd(1)
+	angle = rnd(1)
 	rock = {
-		cx = cos(angle)*64,
-		cy = sin(angle)*64,
+		x = cos(angle)*64,
+		y = sin(angle)*64,
 		r = flr(rnd(2))+1,
 		vx=0, vy=0
 	}
-	dx = plr.x-rock.cx
-	dy = plr.y-rock.cy
+	dx = plr.x-rock.x
+	dy = plr.y-rock.y
 	distance = sqrt(dx*dx+dy*dy)
 	rock.vx = dx / distance
 	rock.vy = dy / distance
@@ -82,17 +94,28 @@ end
 
 function update_rocks()
 	for rock in all(rocks) do
-		rock.cx += rock.vx
-		rock.cy += rock.vy
+		rock.x += rock.vx
+		rock.y += rock.vy
 	end
 end
 
 function draw_rocks()
 	for rock in all(rocks) do
-		circ(rock.cx,rock.cy,rock.r,5)
+		circ(rock.x,rock.y,rock.r,5)
 	end
 end
 
+-->8
+-- collision
+
+function is_colliding(o1, o2)
+	-- collision between 2 circles
+	dx = o1.x - o2.x
+	dy = o1.y - o2.y
+	dist = sqrt(dx*dx+dy*dy)
+	return dist < (o1.r + o2.r)
+end
+ 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -104,3 +127,4 @@ __sfx__
 000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00020000080501e0502b050350503a050390502d0501e05018050130500f0500d0500a05009050080500705007050060500605005050050500305003050010500005000050000000000000000000000000000000
 00100000040500b050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000500002963020640136200b61005610036100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
