@@ -10,9 +10,9 @@ __lua__
 --. delete rocks when out of range
 
 function _init()
-	plr = {x=63,y=63} -- player
-	sws={}        -- shockwaves
-	rocks={}
+	plr = {x=63,y=63,r=5} -- player
+	waves={}      -- shockwaves
+	rocks={}      -- rocks
 end
 
 function _update()
@@ -33,7 +33,7 @@ function _update()
 	update_shockwaves()
 	update_rocks()
 	-- check collisions
-	for wave in all(sws) do
+	for wave in all(waves) do
 		for rock in all(rocks) do
 			if is_colliding(wave,rock) then
 				sfx(3)
@@ -46,33 +46,36 @@ end
 
 function _draw()
 	cls()
-	circ(plr.x,plr.y,5,4)
+	circ(plr.x,plr.y,plr.r,4)
 	draw_shockwaves()
 	draw_rocks()
-	print("waves:"..#sws,0,0,12)
+	print("waves:"..#waves,0,0,12)
 	print("rocks:"..#rocks,0,6,5)
 end
 -->8
 -- shockwave
 
 function create_shockwave()
-	add(sws,{x=plr.x, y=plr.y,r=1})
+	add(waves,
+		{x=plr.x, y=plr.y, r=plr.r}
+	)
 end
 
 function update_shockwaves()
-	for sw in all(sws) do
-		sw.r += 0.2
-		if sw.r > 60 then
-			del(sws,sw)
+	for wave in all(waves) do
+		wave.r += 0.2
+		if wave.r > 60 then
+			del(waves,wave)
 		end
 	end
 end
 
 function draw_shockwaves()
-	for sw in all(sws) do
-		circ(sw.x,sw.y,sw.r,13)
+	for wave in all(waves) do
+		circ(wave.x,wave.y,wave.r,13)
 	end
 end
+
 -->8
 -- rocks
 
