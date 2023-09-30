@@ -5,9 +5,7 @@ __lua__
 --by miguel maltez
 
 --todo:
--- . bar of energy
--- . charging of energy
--- . define wave color scale
+-- . automatic rock spawn
 
 function _init()
 	init_game()
@@ -15,6 +13,7 @@ end
 
 -->8
 -- game
+spawn_timer = 30
 
 function init_game()
 	plr = {
@@ -30,12 +29,6 @@ end
 
 function update_game()
 	update_player()
-	
-	if btnp(❎) then
-		sfx(2)
-		create_rock()
-	end
-
 	update_shockwaves()
 	update_rocks()
 	-- check collisions waves & rocks
@@ -66,6 +59,19 @@ function update_game()
 		elseif dist(rock,plr) > 256 then
 			del(rocks, rock)
 		end
+	end
+	-- rock spawn
+	if btnp(❎) then
+		sfx(2)
+		create_rock()
+	end
+	spawn_timer -= 1
+	if spawn_timer == 0 then
+		if rnd() < 1/#rocks then
+			sfx(2)
+			create_rock()
+		end
+		spawn_timer = 30
 	end
 end
 
