@@ -45,8 +45,17 @@ function update_game()
 	for wave in all(waves) do
 		for rock in all(rocks) do
 			if is_colliding(wave,rock) then
-				sfx(3)
-				del(rocks, rock)
+				if wave.e <= 1 then
+					dmg = wave.e
+				else
+					dmg = wave.e * rock.r / wave.r
+				end
+				rock.e -= dmg
+				wave.e -= dmg
+				if rock.e <= 0 then
+					sfx(3)
+					del(rocks, rock)
+				end
 			end
 		end
 	end
@@ -67,25 +76,23 @@ function draw_game()
 	circ(plr.x,plr.y,plr.r,4)
 	draw_shockwaves()
 	draw_rocks()
-	print("waves:"..#waves,0,0,12)
 end
-
--->8
--- menu
 
 -->8
 -- shockwave
 
 function create_shockwave()
-	add(waves,
-		{x=plr.x, y=plr.y, r=plr.r}
-	)
+	lastwave = {
+		x=plr.x, y=plr.y, r=plr.r,
+		e=100
+	}
+	add(waves,lastwave)
 end
 
 function update_shockwaves()
 	for wave in all(waves) do
 		wave.r += 0.2
-		if wave.r > 60 then
+		if wave.e <= 0 then
 			del(waves,wave)
 		end
 	end
@@ -93,7 +100,15 @@ end
 
 function draw_shockwaves()
 	for wave in all(waves) do
-		circ(wave.x,wave.y,wave.r,13)
+		cor = 10
+		if (wave.e < 50) cor=9
+		if (wave.e < 25) cor=4
+		if (wave.e < 10) cor=1
+		circ(wave.x,wave.y,wave.r,cor)
+	end
+	print("waves:"..#waves,0,0,12)
+	if lastwave then
+		print("e:"..lastwave.e,64,0,12)
 	end
 end
 
@@ -106,8 +121,10 @@ function create_rock()
 		x = 91*cos(angle) + plr.x,
 		y = 91*sin(angle) + plr.y,
 		r = flr(rnd(2))+1,
-		vx=0, vy=0
+		vx=0, vy=0,
+		e = 3.14
 	}
+	rock.e = rock.e*rock.r^2
 	local dx = plr.x-rock.x
 	local dy = plr.y-rock.y
 	local distance = dist(plr,rock)
@@ -129,7 +146,7 @@ function draw_rocks()
 		circ(rock.x,rock.y,rock.r,5)
 	end
 	if lastrock then
-		print("("..lastrock.x..","..lastrock.y..")", 64,6,5)
+		print("e:"..lastrock.e, 64,6,5)
 	end
 	print("rocks:"..#rocks,0,6,5)
 end
