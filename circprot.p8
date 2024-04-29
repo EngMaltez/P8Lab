@@ -5,7 +5,9 @@ __lua__
 --by miguel maltez
 
 --todo:
--- . automatic rock spawn
+-- . jet animation
+-- . inertia
+
 
 function _init()
 	init_game()
