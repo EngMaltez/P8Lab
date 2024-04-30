@@ -35,6 +35,7 @@ game concepts
 references
 ==========
 
+* [PICO-8 API reference](https://pico-8.fandom.com/wiki/APIReference)
 * [Nerdy Teachers youtube](https://www.youtube.com/@NerdyTeachers)
   - [PICO-8 bite-size games](https://www.youtube.com/watch?v=Oa1uiNqmXCg&list=PLyhkEEoUjSQtafaYQhGPaNJZgFt1lcS1L)
   - Basic game programming and development concepts
