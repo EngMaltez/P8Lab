@@ -3,35 +3,36 @@ version 42
 __lua__
 -- snake game
 -- by zetlam
--- spent: ⧗
-snake={}
-scale=4
+-- spent: ⧗⧗
+snake = {}
+scale = 4
+tick = 0
 
 function _init()
 	snake.x = 63
 	snake.y = 63
 	snake.body = {}
+	add(snake.body,{x=63,y=63})
+	add(snake.body,{x=62,y=63})
 	snake.dx = 0
 	snake.dy = 0
 end
 
 function _update()
 	tick += 1
-	if (btnp(⬅️)) snake.x -= scale
-	if (btnp(➡️)) snake.x += scale
-	if (btnp(⬆️)) snake.y -= scale
-	if (btnp(⬇️)) snake.y += scale
-	if (tick%10==0)
-		game_update()
-	end
+	if (btnp(⬅️)) snake.dx = -1
+	if (btnp(➡️)) snake.dx =  1
+	if (btnp(⬆️)) snake.dy = -1
+	if (btnp(⬇️)) snake.dy =  1
 end
 
 function _draw()
 	cls()
-	-- draw snake head
-	rect(snake.x, snake.y, snake.x+scale, snake.y+scale, 12)
-	-- draw snake body
-	
+	-- draw snake
+	for i=1,#(snake.body) do
+		seg = snake.body[i]
+		pset(seg.x, seg.y, 11)
+	end
 end
 
 
@@ -39,9 +40,14 @@ end
 -- game logic
 
 function game_logic()
-	for i= do
-		
-	end
+end
+
+function update_snake()
+	if (snake.dx != 0) return
+	if (snake.dy != 0) return
+	head = snake.body[1]
+	head.x += snake.dx
+	head.y += snake.dy
 end
 
 -->8
