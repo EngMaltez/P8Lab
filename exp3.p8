@@ -1,54 +1,23 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- snake game
--- by zetlam
--- spent: ⧗
-snake={}
-scale=4
+-- experiments with tables
 
-function _init()
-	snake.x = 63
-	snake.y = 63
-	snake.body = {}
-	snake.dx = 0
-	snake.dy = 0
+table_a = {
+	x=1,y=2,z=3,
+	cat="neko"}
+
+-- access all key value pairs
+for k,v in pairs(table_a) do
+	print(k..": "..v)
 end
 
-function _update()
-	tick += 1
-	if (btnp(⬅️)) snake.x -= scale
-	if (btnp(➡️)) snake.x += scale
-	if (btnp(⬆️)) snake.y -= scale
-	if (btnp(⬇️)) snake.y += scale
-	if (tick%10==0)
-		game_update()
-	end
-end
-
-function _draw()
-	cls()
-	-- draw snake head
-	rect(snake.x, snake.y, snake.x+scale, snake.y+scale, 12)
-	-- draw snake body
-	
-end
-
-
--->8
--- game logic
-
-function game_logic()
-	for i= do
-		
-	end
-end
-
--->8
--- game graphics
-
-function game_draw()
-
+-- access by key
+print("by key: "..table_a["cat"])
+-- access non-existing key
+if table_a["dog"] == nil then
+	print("missing dog")
+	print(table_a["dog"])
 end
 
 __gfx__
