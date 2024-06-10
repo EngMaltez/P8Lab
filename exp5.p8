@@ -1,56 +1,33 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- snake
--- by zetlam
--- spent: ⧗⧗
 
-ticks = 0
-move_beat=30
-
-grid_size=4
-
-body={{x=16,y=16}}
-dx,dy = 0,0
-
-function _init()
-end
+body = {}
 
 function _update()
 	if (btnp(🅾️)) grow_snake()
-	if (btnp(⬅️)) dx,dy = -1,0
-	if (btnp(➡️)) dx,dy = 1,0
-	if (btnp(⬆️)) dx,dy = 0,-1
-	if (btnp(⬇️)) dx,dy = 0,1
-	ticks += 1
-	if (ticks>=move_beat) then
-		ticks=0
-		if (dx!=0 or dy!=0) then
-			move_snake(dx,dy)
-			sfx(1)
-		end
-	end
+	if (btnp(⬅️)) move_snake(-1,0)
+	if (btnp(➡️)) move_snake(1,0)
+	if (btnp(⬆️)) move_snake(0,-1)
+	if (btnp(⬇️)) move_snake(0,1)
 end
 
 function _draw()
 	cls()
 	for i=1,#body do
-		print(i..": "..body[i].x..","..body[i].y,3)
+		print(i..": "..body[i].x..","..body[i].y)
 	end
-	-- draw body
-	for i=1,#body do
-		if i==1 then
-			cor=12
-		else
-			cor=11
-		end
-		rect(
-			body[i].x*grid_size,
-			body[i].y*grid_size,
-			(body[i].x+1)*grid_size-1,
-			(body[i].y+1)*grid_size-1,
-			cor
-		)
+end
+
+function grow_snake()
+	last=#body
+	if last == 0 then
+		body[last+1] = {x=10,y=10}
+	else
+		body[last+1] = {
+			x=body[last].x,
+			y=body[last].y
+		}
 	end
 end
 
@@ -63,13 +40,6 @@ function move_snake(dx,dy)
 	body[1].y += dy
 end
 
-function grow_snake()
-	last = #body
-	body[last+1] = {
-		x=body[last].x,
-		y=body[last].y,
-	}
-end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -77,6 +47,3 @@ __gfx__
 00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00700700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-__sfx__
-000100001400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000200001001019000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
