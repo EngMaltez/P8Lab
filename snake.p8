@@ -1,62 +1,63 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- snake game
+-- snake
 -- by zetlam
--- spent: ⧗⧗
-snake = {}
-scale = 4
-tick = 0
+-- spent: ⧗
+
+ticks = 0
+move_beat=30
+
+grid_size=4
+
+head={x=15,y=15}
+body={head}
+dx,dy = 0,0
 
 function _init()
-	snake.x = 63
-	snake.y = 63
-	snake.body = {}
-	add(snake.body,{x=63,y=63})
-	add(snake.body,{x=62,y=63})
-	snake.dx = 0
-	snake.dy = 0
 end
 
 function _update()
-	tick += 1
-	if (btnp(⬅️)) snake.dx = -1
-	if (btnp(➡️)) snake.dx =  1
-	if (btnp(⬆️)) snake.dy = -1
-	if (btnp(⬇️)) snake.dy =  1
+	if (btnp(⬅️)) dx,dy = -1,0
+	if (btnp(➡️)) dx,dy = 1,0
+	if (btnp(⬆️)) dx,dy = 0,-1
+	if (btnp(⬇️)) dx,dy = 0,1
+	if (btnp(🅾️)) grow_snake()
+	ticks += 1
+	if (ticks>=move_beat) then
+		ticks=0
+		if (dx!=0 or dy!=0) sfx(1)
+		move_snake()
+	end
 end
 
 function _draw()
 	cls()
-	-- draw snake
-	for i=1,#(snake.body) do
-		seg = snake.body[i]
-		pset(seg.x, seg.y, 11)
-	end
+	print(head.x..","..head.y,7)
+	print(#body)
+	-- draw head
+	rect(
+		head.x*grid_size,
+		head.y*grid_size,
+		(head.x+1)*grid_size-1,
+		(head.y+1)*grid_size-1,
+		12
+	)
 end
 
-
--->8
--- game logic
-
-function game_logic()
+function move_snake()
+	if (dx==0 and dy==0) return
+	head.x += dx
+	head.y += dy
 end
 
-function update_snake()
-	if (snake.dx != 0) return
-	if (snake.dy != 0) return
-	head = snake.body[1]
-	head.x += snake.dx
-	head.y += snake.dy
+function grow_snake()
+	last = #body
+	body[last+1] = {
+		x=body[last].x,
+		y=body[last].y,
+	}
 end
-
--->8
--- game graphics
-
-function game_draw()
-
-end
-
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -64,3 +65,6 @@ __gfx__
 00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00700700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+__sfx__
+000100001400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000200001001019000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
