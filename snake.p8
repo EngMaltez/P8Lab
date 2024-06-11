@@ -3,44 +3,52 @@ version 42
 __lua__
 -- snake
 -- by zetlam
--- spent: ⧗⧗⧗⧗ ⧗
+-- spent: ⧗⧗⧗⧗ ⧗⧗
 --
--- bugs:
--- 1. slowdown when length > 20 
---   - solution stop printing coordinates
+-- todo:
+-- 1. collision with screen boundary
 
 ticks = 0
 move_beat=10
-
 grid_size=8
 
-body={{
-		x=flr(128/grid_size/2),
-		y=flr(128/grid_size/2)
-}}
 dx,dy = 0,0
 fruits={}
+body={}
 
 function _init()
+	initialize_game()
+end
+
+function initialize_game()
+	fruits = {}
+	body={{
+			x=flr(128/grid_size/2),
+			y=flr(128/grid_size/2)
+	}}
 	for i=1,18 do
 		grow_snake()
 	end
 	create_fruit()
+	_draw = draw_game
+	_update = update_game
 end
 
-function _update()
+function update_game()
+	-- button presses
 	if (btnp(⬅️)) dx,dy = -1,0
 	if (btnp(➡️)) dx,dy = 1,0
 	if (btnp(⬆️)) dx,dy = 0,-1
 	if (btnp(⬇️)) dx,dy = 0,1
+	-- update skake on beat
 	ticks += 1
 	if (ticks>=move_beat) then
 		ticks=0
 		if (dx!=0 or dy!=0) then
 			move_snake(dx,dy)
 			sfx(1)
-			-- check ate fruit
 			head = body[1]
+			-- check ate fruit
 			for fruit in all(fruits) do
 				if fruit.x == head.x and fruit.y == head.y then
 					grow_snake()
@@ -49,42 +57,41 @@ function _update()
 					sfx(2)
 				end
 			end
+			-- check ate itself
+			for i=2,#body do
+				seg=body[i]
+				if head.x == seg.x and head.y == seg.y then
+					_draw = draw_gameover
+					_update = update_gameover
+					sfx(3)
+				end
+			end
 		end
 	end
 end
 
-function _draw()
+function draw_game()
 	cls()
-	-- print snake coordinates
-	--for i=1,#body do
-	--	print(i..": "..body[i].x..","..body[i].y,3)
-	--end
-	-- draw snake
-	for i=1,#body do
-		if i==1 then
-			cor=12
-		else
-			cor=11
-		end
-		rect(
-			body[i].x*grid_size,
-			body[i].y*grid_size,
-			(body[i].x+1)*grid_size-1,
-			(body[i].y+1)*grid_size-1,
-			cor
-		)
-	end
+	draw_snake()
 	-- draw fruit
 	for f in all(fruits) do
 		draw_fruit(f.x,f.y)
 	end
+	-- print stats
 	print("len: "..#body,0,0,10)
 	print("cpu: "..
 		flr(100*stat(1)).."%"
 		,80,0,6)
 end -- end _draw
 
+function update_gameover()
+	if (btnp(❎)) initialize_game()
+end
 
+function draw_gameover()
+	cls(8)
+	print("game over",46,60,0)
+end
 
 -->8
 -- snake
@@ -106,6 +113,23 @@ function grow_snake()
 	}
 end
 
+function draw_snake()
+	for i=1,#body do
+		-- head is blue
+		if i==1 then
+			cor=12
+		else
+			cor=11
+		end
+		rect(
+			body[i].x*grid_size,
+			body[i].y*grid_size,
+			(body[i].x+1)*grid_size-1,
+			(body[i].y+1)*grid_size-1,
+			cor
+		)
+	end
+end
 -->8
 -- fruit
 
@@ -136,3 +160,4 @@ __sfx__
 000100001400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000200001001019000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000900002242012410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000800001164019650186300b62005610000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
