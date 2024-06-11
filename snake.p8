@@ -3,21 +3,22 @@ version 42
 __lua__
 -- snake
 -- by zetlam
--- spent: ⧗⧗
+-- spent: ⧗⧗⧗⧗
 
 ticks = 0
-move_beat=30
+move_beat=10
 
 grid_size=4
 
 body={{x=16,y=16}}
 dx,dy = 0,0
+fruits={}
 
 function _init()
+	create_fruit()
 end
 
 function _update()
-	if (btnp(🅾️)) grow_snake()
 	if (btnp(⬅️)) dx,dy = -1,0
 	if (btnp(➡️)) dx,dy = 1,0
 	if (btnp(⬆️)) dx,dy = 0,-1
@@ -28,6 +29,16 @@ function _update()
 		if (dx!=0 or dy!=0) then
 			move_snake(dx,dy)
 			sfx(1)
+			-- check ate fruit
+			head = body[1]
+			for fruit in all(fruits) do
+				if fruit.x == head.x and fruit.y == head.y then
+					grow_snake()
+					del(fruits,fruit)
+					create_fruit()
+					sfx(2)
+				end
+			end
 		end
 	end
 end
@@ -52,6 +63,10 @@ function _draw()
 			cor
 		)
 	end
+	-- draw fruit
+	for f in all(fruits) do
+		draw_fruit(f.x,f.y)
+	end
 end
 
 function move_snake(dx,dy)
@@ -70,6 +85,28 @@ function grow_snake()
 		y=body[last].y,
 	}
 end
+
+function create_fruit()
+	fruit = {
+		x=flr(rnd(32)),
+		y=flr(rnd(32))
+	}
+	add(fruits, fruit)
+end
+
+-->8
+-- graphics
+
+function draw_fruit(x,y)
+	rect(
+		x*grid_size,
+		y*grid_size,
+		(x+1)*grid_size-1,
+		(y+1)*grid_size-1,
+		8
+	)
+end
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -80,3 +117,4 @@ __gfx__
 __sfx__
 000100001400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000200001001019000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000900002242012410000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
