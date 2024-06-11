@@ -26,7 +26,7 @@ function initialize_game()
 			x=flr(128/grid_size/2),
 			y=flr(128/grid_size/2)
 	}}
-	for i=1,18 do
+	for i=1,2 do
 		grow_snake()
 	end
 	create_fruit()
@@ -55,6 +55,9 @@ function update_game()
 					del(fruits,fruit)
 					create_fruit()
 					sfx(2)
+					if (#body%10==0) then
+						move_beat -= 1 
+					end
 				end
 			end
 			-- check ate itself
@@ -71,7 +74,7 @@ function update_game()
 end
 
 function draw_game()
-	cls()
+	cls(1)
 	draw_snake()
 	-- draw fruit
 	for f in all(fruits) do
@@ -90,6 +93,7 @@ end
 
 function draw_gameover()
 	cls(8)
+	print("length: "..#body,44,50,0)
 	print("game over",46,60,0)
 end
 
