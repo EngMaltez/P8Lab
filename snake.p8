@@ -3,18 +3,28 @@ version 42
 __lua__
 -- snake
 -- by zetlam
--- spent: ⧗⧗⧗⧗
+-- spent: ⧗⧗⧗⧗ ⧗
+--
+-- bugs:
+-- 1. slowdown when length > 20 
+--   - solution stop printing coordinates
 
 ticks = 0
 move_beat=10
 
-grid_size=4
+grid_size=8
 
-body={{x=16,y=16}}
+body={{
+		x=flr(128/grid_size/2),
+		y=flr(128/grid_size/2)
+}}
 dx,dy = 0,0
 fruits={}
 
 function _init()
+	for i=1,18 do
+		grow_snake()
+	end
 	create_fruit()
 end
 
@@ -45,10 +55,11 @@ end
 
 function _draw()
 	cls()
-	for i=1,#body do
-		print(i..": "..body[i].x..","..body[i].y,3)
-	end
-	-- draw body
+	-- print snake coordinates
+	--for i=1,#body do
+	--	print(i..": "..body[i].x..","..body[i].y,3)
+	--end
+	-- draw snake
 	for i=1,#body do
 		if i==1 then
 			cor=12
@@ -67,7 +78,16 @@ function _draw()
 	for f in all(fruits) do
 		draw_fruit(f.x,f.y)
 	end
-end
+	print("len: "..#body,0,0,10)
+	print("cpu: "..
+		flr(100*stat(1)).."%"
+		,80,0,6)
+end -- end _draw
+
+
+
+-->8
+-- snake
 
 function move_snake(dx,dy)
 	for i=#body,2,-1 do
@@ -86,26 +106,24 @@ function grow_snake()
 	}
 end
 
+-->8
+-- fruit
+
 function create_fruit()
 	fruit = {
-		x=flr(rnd(32)),
-		y=flr(rnd(32))
-	}
+		x=flr(rnd(128/grid_size)),
+		y=flr(rnd(128/grid_size))}
 	add(fruits, fruit)
 end
 
--->8
--- graphics
-
 function draw_fruit(x,y)
-	rect(
-		x*grid_size,
-		y*grid_size,
+	rectfill(
+		x*grid_size, y*grid_size,
 		(x+1)*grid_size-1,
 		(y+1)*grid_size-1,
-		8
-	)
+		8)
 end
+
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
