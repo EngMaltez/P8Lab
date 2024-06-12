@@ -3,14 +3,19 @@ version 42
 __lua__
 -- snake
 -- by zetlam
--- spent: ⧗⧗⧗⧗ ⧗⧗
+-- spent: ⧗⧗⧗⧗ ⧗⧗⧗⧗
 --
 -- todo:
--- 1. collision with screen boundary
+-- 1. make start menu
+-- 2. experiment with double die for random to be more likely in the center
 
 ticks = 0
 move_beat=10
-grid_size=8
+grid_size=4
+wall_left = 0
+wall_right=flr(128/grid_size)-1
+wall_top = 0
+wall_bottom=flr(128/grid_size)-1
 
 dx,dy = 0,0
 fruits={}
@@ -21,6 +26,8 @@ function _init()
 end
 
 function initialize_game()
+	move_beat=10
+	dx,dy = 0,0
 	fruits = {}
 	body={{
 			x=flr(128/grid_size/2),
@@ -43,7 +50,7 @@ function update_game()
 	-- update skake on beat
 	ticks += 1
 	if (ticks>=move_beat) then
-		ticks=0
+		ticks = 0
 		if (dx!=0 or dy!=0) then
 			move_snake(dx,dy)
 			sfx(1)
@@ -55,7 +62,7 @@ function update_game()
 					del(fruits,fruit)
 					create_fruit()
 					sfx(2)
-					if (#body%10==0) then
+					if (#body%5==0) then
 						move_beat -= 1 
 					end
 				end
@@ -69,22 +76,57 @@ function update_game()
 					sfx(3)
 				end
 			end
+			-- check hit wall
+			if head.x <= wall_left
+				or head.x >= wall_right
+				or head.y <= wall_top
+				or head.y >= wall_bottom then
+				_draw = draw_gameover
+				_update = update_gameover
+				sfx(3)
+			end
 		end
 	end
-end
+end -- end update_game
 
 function draw_game()
 	cls(1)
 	draw_snake()
+	-- draw wall
+	rectfill(
+		wall_left*grid_size,
+		wall_top*grid_size,
+		(wall_right+1)*grid_size-1,
+		grid_size-1,
+		5)
+	rectfill(
+		wall_left*grid_size,
+		wall_bottom*grid_size,
+		(wall_right+1)*grid_size-1,
+		(wall_bottom+1)*grid_size-1,
+		5)
+	rectfill(
+		wall_left*grid_size,
+		wall_top*grid_size,
+		(wall_left+1)*grid_size-1,
+		(wall_bottom+1)*grid_size-1,
+		5)
+	rectfill(
+		wall_right*grid_size,
+		wall_top*grid_size,
+		(wall_right+1)*grid_size-1,
+		(wall_bottom+1)*grid_size-1,
+		5)
 	-- draw fruit
 	for f in all(fruits) do
 		draw_fruit(f.x,f.y)
 	end
 	-- print stats
 	print("len: "..#body,0,0,10)
+	print("beat: "..move_beat,50,0,10)
 	print("cpu: "..
 		flr(100*stat(1)).."%"
-		,80,0,6)
+		,100,0,6)
 end -- end _draw
 
 function update_gameover()
@@ -134,13 +176,15 @@ function draw_snake()
 		)
 	end
 end
+
 -->8
 -- fruit
 
 function create_fruit()
 	fruit = {
-		x=flr(rnd(128/grid_size)),
-		y=flr(rnd(128/grid_size))}
+		x=flr(rnd(wall_right-wall_left-1)+1),
+		y=flr(rnd(wall_bottom-wall_top-1)+1)
+	}
 	add(fruits, fruit)
 end
 
