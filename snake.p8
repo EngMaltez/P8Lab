@@ -7,7 +7,8 @@ __lua__
 --
 -- todo:
 -- 1. make start menu
--- 2. experiment with double die for random to be more likely in the center
+-- 2. don't creat fruit atop snake
+-- 3. experiment with double die for random to be more likely in the center
 
 ticks = 0
 move_beat=10
